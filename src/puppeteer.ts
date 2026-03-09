@@ -6,9 +6,11 @@ let browserPromise: Promise<Browser> | null = null;
 
 async function getBrowser(): Promise<Browser> {
   if (!browserPromise) {
+    const executablePath = process.env.PUPPETEER_EXECUTABLE_PATH;
     browserPromise = puppeteer.launch({
       headless: true,
-      ignoreHTTPSErrors: true
+      ignoreHTTPSErrors: true,
+      ...(executablePath ? { executablePath } : {})
     });
   }
   return browserPromise;

@@ -1,0 +1,39 @@
+{
+  "name": "expdf",
+  "version": "0.1.0",
+  "description": "Standalone HTTP worker for rendering reveal.js pitch decks to PDF and PowerPoint",
+  "main": "dist/server.js",
+  "scripts": {
+    "dev": "ts-node-dev --respawn --transpile-only src/server.ts",
+    "build": "tsc",
+    "start": "node dist/server.js",
+    "test": "npm run build && node --test tests/*.test.cjs",
+    "lint": "echo \"no linter configured\"",
+    "typecheck": "tsc --noEmit"
+  },
+  "keywords": [
+    "pdf",
+    "pptx",
+    "puppeteer",
+    "worker"
+  ],
+  "author": "",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.20.3",
+    "express": "^4.21.2",
+    "pptxgenjs": "^3.12.0",
+    "pino": "^9.5.0",
+    "pino-http": "^10.3.0",
+    "puppeteer": "^22.15.0"
+  },
+  "devDependencies": {
+    "@types/express": "^4.17.21",
+    "@types/node": "^22.10.2",
+    "@types/pino-http": "^6.1.0",
+    "@types/body-parser": "^1.19.5",
+    "pino-pretty": "^11.2.2",
+    "ts-node-dev": "^2.0.0",
+    "typescript": "^5.7.3"
+  }
+}

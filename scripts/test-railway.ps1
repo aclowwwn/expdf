@@ -22,6 +22,8 @@ if (-not $WorkerUrl -or -not $ApiKey) {
   exit 2
 }
 
+$ApiKey = $ApiKey.Trim()
+
 if ($WorkerUrl.EndsWith("/")) {
   $WorkerUrl = $WorkerUrl.TrimEnd("/")
 }
@@ -35,7 +37,11 @@ $payload = @{
 } | ConvertTo-Json -Compress
 
 Write-Host "POST $endpoint"
-Write-Host "x-api-key length: $($ApiKey.Length)"
+if ($ApiKey.Length -ge 4) {
+  Write-Host "x-api-key length: $($ApiKey.Length) (starts '$($ApiKey.Substring(0,2))' ends '$($ApiKey.Substring($ApiKey.Length-2,2))')"
+} else {
+  Write-Host "x-api-key length: $($ApiKey.Length)"
+}
 
 # Write payload to a temp file (avoids PowerShell/curl quoting issues on Windows).
 $tmp = Join-Path $env:TEMP ("expdf-payload-" + [guid]::NewGuid().ToString() + ".json")

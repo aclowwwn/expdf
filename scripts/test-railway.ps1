@@ -37,10 +37,16 @@ $payload = @{
 Write-Host "POST $endpoint"
 Write-Host "x-api-key length: $($ApiKey.Length)"
 
+# Write payload to a temp file (avoids PowerShell/curl quoting issues on Windows).
+$tmp = Join-Path $env:TEMP ("expdf-payload-" + [guid]::NewGuid().ToString() + ".json")
+[System.IO.File]::WriteAllText($tmp, $payload, (New-Object System.Text.UTF8Encoding($false)))
+
 # Use curl.exe explicitly (PowerShell aliases `curl` to Invoke-WebRequest on Windows).
 & curl.exe -i $endpoint `
   -X POST `
   -H "content-type: application/json" `
   -H "x-api-key: $ApiKey" `
-  --data $payload
+  --data-binary "@$tmp"
+
+Remove-Item $tmp -ErrorAction SilentlyContinue
 

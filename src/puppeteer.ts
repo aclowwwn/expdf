@@ -10,6 +10,8 @@ async function getBrowser(): Promise<Browser> {
     browserPromise = puppeteer.launch({
       headless: true,
       ignoreHTTPSErrors: true,
+      // Required on many container hosts (incl. Railway) where Chromium sandboxing isn't available.
+      args: ["--no-sandbox", "--disable-setuid-sandbox", "--disable-dev-shm-usage"],
       ...(executablePath ? { executablePath } : {})
     });
   }

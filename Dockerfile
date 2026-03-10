@@ -12,7 +12,13 @@ RUN pnpm run build
 FROM node:22-alpine AS runtime
 
 # Install Chromium for Puppeteer (Alpine package)
-RUN apk add --no-cache chromium
+RUN apk add --no-cache \
+  chromium \
+  nss \
+  freetype \
+  harfbuzz \
+  ca-certificates \
+  ttf-freefont
 
 WORKDIR /app
 

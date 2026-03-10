@@ -21,6 +21,7 @@ function validateHtmlSize(html: string): boolean {
 
 export function createApp() {
   const app = express();
+  const verboseErrors = process.env.VERBOSE_ERRORS === "1";
 
   app.use(httpLogger);
   app.use((req, res, next) => {
@@ -103,7 +104,7 @@ export function createApp() {
     } catch (err: any) {
       const errMessage = err?.message ?? String(err);
       logger.error({ err, message: errMessage, stack: err?.stack }, "PDF render failed");
-      const details = config.nodeEnv === "development" ? errMessage : "render_failed";
+      const details = config.nodeEnv === "development" || verboseErrors ? errMessage : "render_failed";
       res.status(502).json({ error: "render_failed", details });
     }
   });
@@ -159,7 +160,7 @@ export function createApp() {
     } catch (err: any) {
       const errMessage = err?.message ?? String(err);
       logger.error({ err, message: errMessage, stack: err?.stack }, "PPTX render failed");
-      const details = config.nodeEnv === "development" ? errMessage : "render_failed";
+      const details = config.nodeEnv === "development" || verboseErrors ? errMessage : "render_failed";
       res.status(502).json({ error: "render_failed", details });
     }
   });
@@ -170,7 +171,11 @@ export function createApp() {
     logger.error({ err }, "Unhandled error");
     res
       .status(500)
-      .json({ error: "render_failed", details: config.nodeEnv === "development" ? String(err?.message ?? err) : "internal_error" });
+      .json({
+        error: "render_failed",
+        details:
+          config.nodeEnv === "development" || verboseErrors ? String(err?.message ?? err) : "internal_error"
+      });
   });
 
   return app;

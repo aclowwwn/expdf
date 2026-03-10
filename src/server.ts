@@ -8,7 +8,25 @@ import { renderPptxFromHtml } from "./pptx";
 
 function authMiddleware(req: Request, res: Response, next: NextFunction) {
   const apiKey = req.header("x-api-key");
+  const verboseAuth = process.env.VERBOSE_ERRORS === "1";
   if (!apiKey || apiKey !== config.apiKey) {
+    if (verboseAuth) {
+      const safeFingerprint = (s?: string) =>
+        !s
+          ? { length: 0 }
+          : s.length >= 4
+            ? { length: s.length, starts: s.slice(0, 2), ends: s.slice(-2) }
+            : { length: s.length };
+
+      res.status(401).json({
+        error: "unauthorized",
+        debug: {
+          received: safeFingerprint(apiKey),
+          expected: safeFingerprint(config.apiKey)
+        }
+      });
+      return;
+    }
     res.status(401).json({ error: "unauthorized" });
     return;
   }
